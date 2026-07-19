@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { usePatients } from '../context/PatientContext';
 import { RegisterPatientModal } from '../components/forms/RegisterPatientModal';
 import { EditPatientModal } from '../components/forms/EditPatientModal';
@@ -18,9 +18,13 @@ import {
   AlertTriangle, 
   Heart, 
   Brain, 
-  Printer
+  Printer,
+  Filter,
+  BarChart3,
+  X
 } from 'lucide-react';
 import { PrintReportModal } from '../components/shared/PrintReportModal';
+import { SessionDetailModal } from '../components/shared/SessionDetailModal';
 import type { Patient, ClinicalSession } from '../types';
 
 interface PatientManagementProps {
@@ -44,6 +48,12 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(patients[0]?.id || null);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [selectedSessionForPrint, setSelectedSessionForPrint] = useState<ClinicalSession | null>(null);
+  const [selectedSessionForDetail, setSelectedSessionForDetail] = useState<ClinicalSession | null>(null);
+
+  // Session filter states
+  const [filterDateFrom, setFilterDateFrom] = useState('');
+  const [filterDateTo, setFilterDateTo] = useState('');
+  const [filterSpecialist, setFilterSpecialist] = useState<string>('ALL');
 
   // Edit States
   const [isEditing, setIsEditing] = useState(false);
@@ -111,8 +121,36 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
     return <Sparkles size={12} className="text-emerald-500" />;
   };
 
-  // Filter sessions for the selected patient
-  const patientSessions = sessions.filter(s => s.patientId === selectedPatientId);
+  // Filter sessions for the selected patient, then apply date + specialist filters
+  const patientSessions = useMemo(() => {
+    let result = sessions.filter(s => s.patientId === selectedPatientId);
+
+    if (filterDateFrom) {
+      const fromTime = new Date(filterDateFrom + 'T00:00:00').getTime();
+      if (!isNaN(fromTime)) {
+        result = result.filter(s => new Date(s.date).getTime() >= fromTime);
+      }
+    }
+    if (filterDateTo) {
+      const toTime = new Date(filterDateTo + 'T23:59:59').getTime();
+      if (!isNaN(toTime)) {
+        result = result.filter(s => new Date(s.date).getTime() <= toTime);
+      }
+    }
+    if (filterSpecialist !== 'ALL') {
+      result = result.filter(s => s.specialistRole === filterSpecialist);
+    }
+
+    return result;
+  }, [sessions, selectedPatientId, filterDateFrom, filterDateTo, filterSpecialist]);
+
+  const hasActiveFilters = filterDateFrom !== '' || filterDateTo !== '' || filterSpecialist !== 'ALL';
+
+  const clearFilters = () => {
+    setFilterDateFrom('');
+    setFilterDateTo('');
+    setFilterSpecialist('ALL');
+  };
 
   return (
     <div className="space-y-6 animate-all duration-500">
@@ -332,9 +370,65 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
                       <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wide">Sesiones Clínicas de este Paciente</h4>
                     </div>
 
+                    {/* Filters Row */}
+                    {sessions.filter(s => s.patientId === selectedPatientId).length > 0 && (
+                      <div className="bg-slate-50/60 border border-slate-100 rounded-xl p-3 flex flex-col sm:flex-row gap-3 items-start sm:items-end">
+                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 shrink-0">
+                          <Filter size={12} />
+                          Filtros:
+                        </div>
+                        <div className="flex flex-wrap gap-2 flex-1">
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Desde</label>
+                            <input
+                              type="date"
+                              value={filterDateFrom}
+                              onChange={(e) => setFilterDateFrom(e.target.value)}
+                              className="text-[11px] font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-400"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Hasta</label>
+                            <input
+                              type="date"
+                              value={filterDateTo}
+                              onChange={(e) => setFilterDateTo(e.target.value)}
+                              className="text-[11px] font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-400"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Especialista</label>
+                            <select
+                              value={filterSpecialist}
+                              onChange={(e) => setFilterSpecialist(e.target.value)}
+                              className="text-[11px] font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-400 cursor-pointer"
+                            >
+                              <option value="ALL">Todos</option>
+                              <option value="PSICOLOGIA_CLINICA">Psicología Clínica</option>
+                              <option value="EDUCACION_ESPECIAL">Educación Especial</option>
+                              <option value="FISIOTERAPIA">Fisioterapia</option>
+                            </select>
+                          </div>
+                          {hasActiveFilters && (
+                            <button
+                              onClick={clearFilters}
+                              className="flex items-center gap-1 text-[10px] font-bold text-rose-500 hover:text-rose-700 hover:bg-rose-50 px-2 py-1.5 rounded-lg transition-all border border-transparent hover:border-rose-100 mt-auto cursor-pointer"
+                            >
+                              <X size={11} />
+                              Limpiar
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {patientSessions.length === 0 ? (
                       <div className="text-center py-6 border border-dashed border-slate-100 rounded-xl bg-slate-50/20">
-                        <p className="text-[11px] text-slate-400 font-medium">Este paciente aún no registra sesiones de consulta.</p>
+                        <p className="text-[11px] text-slate-400 font-medium">
+                          {hasActiveFilters
+                            ? 'No se encontraron sesiones con los filtros seleccionados.'
+                            : 'Este paciente aún no registra sesiones de consulta.'}
+                        </p>
                       </div>
                     ) : (
                       <div className="overflow-x-auto">
@@ -369,13 +463,22 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
                                   </div>
                                 </td>
                                 <td className="py-2.5 text-right pr-2">
-                                  <button
-                                    onClick={() => setSelectedSessionForPrint(sess)}
-                                    className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all cursor-pointer inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-wide border border-transparent hover:border-teal-100"
-                                  >
-                                    <Printer size={12} />
-                                    Reporte
-                                  </button>
+                                  <div className="flex items-center justify-end gap-1">
+                                    <button
+                                      onClick={() => setSelectedSessionForDetail(sess)}
+                                      className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all cursor-pointer inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-wide border border-transparent hover:border-indigo-100"
+                                    >
+                                      <BarChart3 size={12} />
+                                      Gráfica
+                                    </button>
+                                    <button
+                                      onClick={() => setSelectedSessionForPrint(sess)}
+                                      className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all cursor-pointer inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-wide border border-transparent hover:border-teal-100"
+                                    >
+                                      <Printer size={12} />
+                                      Reporte
+                                    </button>
+                                  </div>
                                 </td>
                               </tr>
                             ))}
@@ -398,13 +501,22 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
                                 <span className="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded">FC {sess.metrics.avgHeartRate}</span>
                                 <span className="bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded">{sess.metrics.comfortIndex}%</span>
                               </div>
-                              <button
-                                onClick={() => setSelectedSessionForPrint(sess)}
-                                className="w-full py-2 text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center gap-1.5 font-bold text-[11px] uppercase border border-slate-100 hover:border-teal-200"
-                              >
-                                <Printer size={12} />
-                                Ver Reporte
-                              </button>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => setSelectedSessionForDetail(sess)}
+                                  className="flex-1 py-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center gap-1.5 font-bold text-[11px] uppercase border border-slate-100 hover:border-indigo-200"
+                                >
+                                  <BarChart3 size={12} />
+                                  Gráfica
+                                </button>
+                                <button
+                                  onClick={() => setSelectedSessionForPrint(sess)}
+                                  className="flex-1 py-2 text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center gap-1.5 font-bold text-[11px] uppercase border border-slate-100 hover:border-teal-200"
+                                >
+                                  <Printer size={12} />
+                                  Reporte
+                                </button>
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -450,6 +562,13 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
         isOpen={selectedSessionForPrint !== null}
         onClose={() => setSelectedSessionForPrint(null)}
         session={selectedSessionForPrint}
+      />
+
+      {/* Session Detail modal with charts */}
+      <SessionDetailModal
+        isOpen={selectedSessionForDetail !== null}
+        onClose={() => setSelectedSessionForDetail(null)}
+        session={selectedSessionForDetail!}
       />
 
     </div>
