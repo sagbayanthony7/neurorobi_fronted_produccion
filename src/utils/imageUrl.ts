@@ -6,5 +6,5 @@ export function imageUrl(url: string | null | undefined): string | undefined {
   if (!url) return undefined;
   if (url.startsWith('/uploads/')) return undefined;
   if (url.startsWith('data:')) return url;
-  return `${import.meta.env.VITE_API_URL}${url}`;
+  return `${import.meta.env.VITE_API_URL || 'https://neurorobibackendproduccion-production.up.railway.app'}${url}`;
 }

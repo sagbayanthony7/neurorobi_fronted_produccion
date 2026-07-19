@@ -43,23 +43,28 @@ function compressImage(file: File): Promise<string> {
 
 const PatientContext = createContext<PatientContextType | undefined>(undefined);
 
-const API_URL = `${import.meta.env.VITE_API_URL}/api`;
+const API_URL = `${import.meta.env.VITE_API_URL || 'https://neurorobibackendproduccion-production.up.railway.app'}/api`;
 
 export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, getToken } = useAuth();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [sessions, setSessions] = useState<ClinicalSession[]>([]);
   const [activePatient, setActivePatient] = useState<Patient | null>(null);
   const [activeSession, setActiveSession] = useState<ClinicalSession | null>(null);
 
+  const getAuthHeaders = () => {
+    const token = getToken();
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   // Initialize from Backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const patientsRes = await axios.get(`${API_URL}/patients`);
+        const patientsRes = await axios.get(`${API_URL}/patients`, { headers: getAuthHeaders() });
         setPatients(patientsRes.data);
         
-        const sessionsRes = await axios.get(`${API_URL}/sessions`);
+        const sessionsRes = await axios.get(`${API_URL}/sessions`, { headers: getAuthHeaders() });
         setSessions(sessionsRes.data);
       } catch (err) {
         console.error("Failed to load initial data from backend", err);
@@ -88,7 +93,7 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
         diagnosis,
         initialObservation,
         profileImageBase64
-      });
+      }, { headers: getAuthHeaders() });
       const newPatient = res.data;
       setPatients(prev => [newPatient, ...prev]);
       return newPatient;
@@ -118,7 +123,7 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
         diagnosis,
         initialObservation,
         profileImageBase64
-      });
+      }, { headers: getAuthHeaders() });
       const updated = res.data;
       setPatients(prev => prev.map(p => p.id === id ? updated : p));
       if (activePatient?.id === id) {
@@ -133,7 +138,7 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Delete Patient
   const deletePatient = async (id: string): Promise<boolean> => {
     try {
-      await axios.delete(`${API_URL}/patients/${id}`);
+      await axios.delete(`${API_URL}/patients/${id}`, { headers: getAuthHeaders() });
       setPatients(prev => prev.filter(p => p.id !== id));
       setSessions(prev => prev.filter(s => s.patientId !== id));
       if (activePatient?.id === id) {
@@ -155,7 +160,7 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setActivePatient(patient);
 
     try {
-      await axios.put(`${API_URL}/patients/${patientId}/status`, { status: 'En Sesión' });
+      await axios.put(`${API_URL}/patients/${patientId}/status`, { status: 'En Sesión' }, { headers: getAuthHeaders() });
       setPatients(prev => prev.map(p => p.id === patientId ? { ...p, status: 'En Sesión' } : p));
     } catch (e) {
       console.error("Failed to update status", e);
@@ -222,12 +227,12 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
         ...session,
         specialistId: user?.id
       };
-      const res = await axios.post(`${API_URL}/sessions`, payload);
+      const res = await axios.post(`${API_URL}/sessions`, payload, { headers: getAuthHeaders() });
       
       setSessions(prev => [res.data, ...prev]);
 
       if (activePatient) {
-        await axios.put(`${API_URL}/patients/${activePatient.id}/status`, { status: 'Sesión Completada' });
+        await axios.put(`${API_URL}/patients/${activePatient.id}/status`, { status: 'Sesión Completada' }, { headers: getAuthHeaders() });
         setPatients(prev => prev.map(p => 
           p.id === activePatient.id ? { ...p, status: 'Sesión Completada' } : p
         ));
@@ -246,7 +251,7 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const clearActiveSession = async () => {
     if (activePatient) {
       try {
-        await axios.put(`${API_URL}/patients/${activePatient.id}/status`, { status: 'Listo para Consulta' });
+        await axios.put(`${API_URL}/patients/${activePatient.id}/status`, { status: 'Listo para Consulta' }, { headers: getAuthHeaders() });
         setPatients(prev => prev.map(p => 
           p.id === activePatient.id ? { ...p, status: 'Listo para Consulta' } : p
         ));

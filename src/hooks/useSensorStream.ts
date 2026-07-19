@@ -72,7 +72,7 @@ export const useSensorStream = ({ isStreaming, onSpikeTriggered, patientId, devi
     if (isStreaming && patientId) {
       resetStream();
 
-      const newSocket = io(import.meta.env.VITE_WS_URL, {
+      const newSocket = io(import.meta.env.VITE_WS_URL || 'wss://neurorobibackendproduccion-production.up.railway.app', {
         transports: ['websocket']
       });
       setSocket(newSocket);

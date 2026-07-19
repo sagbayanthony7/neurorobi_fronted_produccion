@@ -11,11 +11,12 @@ interface AuthContextType {
   user: { id: string; email: string; name: string; role: string; profileImageUrl?: string } | null;
   login: (email: string, pass: string) => Promise<boolean>;
   logout: () => void;
+  getToken: () => string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_URL = `${import.meta.env.VITE_API_URL}/api/auth`;
+const API_URL = `${import.meta.env.VITE_API_URL || 'https://neurorobibackendproduccion-production.up.railway.app'}/api/auth`;
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(() => {
@@ -118,6 +119,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('neurorobi_user');
   };
 
+  const getToken = (): string | null => {
+    return token;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -129,7 +134,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         token,
         user,
         login,
-        logout
+        logout,
+        getToken
       }}
     >
       {children}

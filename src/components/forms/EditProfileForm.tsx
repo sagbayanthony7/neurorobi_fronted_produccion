@@ -96,7 +96,7 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({ onClose, onSuc
       if (profileImageBase64) payload.profileImageBase64 = profileImageBase64;
 
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/auth/profile/${user.id}`,
+        `${import.meta.env.VITE_API_URL || 'https://neurorobibackendproduccion-production.up.railway.app'}/api/auth/profile/${user.id}`,
         payload
       );
 
