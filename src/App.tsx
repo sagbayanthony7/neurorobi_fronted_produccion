@@ -10,6 +10,7 @@ import { PatientDirectory } from './pages/PatientDirectory';
 import { LiveTelemetry } from './pages/LiveTelemetry';
 import { PostSessionReport } from './pages/PostSessionReport';
 import { PatientManagement } from './pages/PatientManagement';
+import { TherapistManagement } from './pages/TherapistManagement';
 import { X } from 'lucide-react';
 
 interface Toast {
@@ -22,7 +23,7 @@ interface Toast {
 const AppContent: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [showSplash, setShowSplash] = useState(true);
-  const [currentScreen, setScreen] = useState<'directory' | 'patients' | 'telemetry' | 'report'>('directory');
+  const [currentScreen, setScreen] = useState<'directory' | 'patients' | 'telemetry' | 'report' | 'therapists'>('directory');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -122,6 +123,15 @@ const AppContent: React.FC = () => {
                   onArchiveSuccess={() => setScreen('directory')}
                   onShowSuccessToast={(msg) => showToast(msg, 'success')}
                   onShowErrorToast={(msg) => showToast(msg, 'warning')}
+                />
+              </div>
+            )}
+
+            {/* Screen 4: Therapist Management (Admin only) */}
+            {currentScreen === 'therapists' && (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <TherapistManagement 
+                  onShowToast={(msg, type = 'success') => showToast(msg, type)}
                 />
               </div>
             )}

@@ -11,14 +11,15 @@ import {
   Settings,
   LogOut,
   ClipboardList,
-  X
+  X,
+  Shield
 } from 'lucide-react';
 import { EditProfileForm } from '../forms/EditProfileForm';
 
 
 interface SidebarProps {
-  currentScreen: 'directory' | 'patients' | 'telemetry' | 'report';
-  setScreen: (screen: 'directory' | 'patients' | 'telemetry' | 'report') => void;
+  currentScreen: 'directory' | 'patients' | 'telemetry' | 'report' | 'therapists';
+  setScreen: (screen: 'directory' | 'patients' | 'telemetry' | 'report' | 'therapists') => void;
   isOpen?: boolean;
   onClose?: () => void;
 }
@@ -44,7 +45,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentScreen, setScreen, isOp
 
   // Render navigation item helper
   const renderNavItem = (
-    screenId: 'directory' | 'patients' | 'telemetry' | 'report',
+    screenId: 'directory' | 'patients' | 'telemetry' | 'report' | 'therapists',
     label: string,
     IconComponent: React.ComponentType<any>,
     disabled: boolean,
@@ -186,6 +187,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentScreen, setScreen, isOp
           'Auditoría y Reporte', 
           FilePieChart, 
           false
+        )}
+
+        {user?.role === 'ADMIN' && (
+          <>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4 block mb-3 mt-4">
+              Administración
+            </span>
+            {renderNavItem('therapists', 'Gestión de Terapeutas', Shield, false)}
+          </>
         )}
       </nav>
 
