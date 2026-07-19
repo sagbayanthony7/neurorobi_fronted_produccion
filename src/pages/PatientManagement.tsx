@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { usePatients } from '../context/PatientContext';
 import { RegisterPatientModal } from '../components/forms/RegisterPatientModal';
 import { EditPatientModal } from '../components/forms/EditPatientModal';
+import { imageUrl } from '../utils/imageUrl';
 import { 
   Search, 
   User, 
@@ -176,7 +177,7 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
                         isSelected ? 'bg-teal-100 text-teal-700' : 'bg-slate-50 text-slate-500'
                       }`}>
                         {p.profileImageUrl ? (
-                          <img src={`${import.meta.env.VITE_API_URL}${p.profileImageUrl}`} alt={p.name} className="h-full w-full object-cover" />
+                          <img src={imageUrl(p.profileImageUrl)} alt={p.name} className="h-full w-full object-cover" />
                         ) : (
                           <User size={15} />
                         )}
@@ -204,7 +205,7 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
                 <div className="flex items-center gap-4">
                   {selectedPatient.profileImageUrl ? (
                     <img 
-                      src={`${import.meta.env.VITE_API_URL}${selectedPatient.profileImageUrl}`} 
+                      src={imageUrl(selectedPatient.profileImageUrl)}
                       alt={`Foto de ${selectedPatient.name}`}
                       className="h-12 w-12 rounded-xl object-cover shadow-xs border border-slate-100"
                     />

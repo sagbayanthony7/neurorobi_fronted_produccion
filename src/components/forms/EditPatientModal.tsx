@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { usePatients } from '../../context/PatientContext';
 import type { Patient } from '../../types';
+import { imageUrl } from '../../utils/imageUrl';
 import {
   X, User, ShieldAlert, Save, Undo, Camera
 } from 'lucide-react';
@@ -36,7 +37,7 @@ export const EditPatientModal: React.FC<EditPatientModalProps> = ({
   const [editObservation, setEditObservation] = useState(patient.initialObservation);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    patient.profileImageUrl ? `${import.meta.env.VITE_API_URL}${patient.profileImageUrl}` : null
+    imageUrl(patient.profileImageUrl) ?? null
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);

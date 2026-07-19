@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useAuth } from '../../context/AuthContext';
+import { imageUrl } from '../../utils/imageUrl';
 import {
   Save, Undo, ShieldAlert, X, Camera, User, Lock, Check,
   Eye, EyeOff
@@ -21,7 +22,7 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({ onClose, onSuc
   const [showPassword, setShowPassword] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    user?.profileImageUrl ? `${import.meta.env.VITE_API_URL}${user.profileImageUrl}` : null
+    imageUrl(user?.profileImageUrl) ?? null
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);

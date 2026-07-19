@@ -3,6 +3,7 @@ import { Logo } from '../brand/Logo';
 import { usePatients } from '../../context/PatientContext';
 import { useRole } from '../../context/RoleContext';
 import { useAuth } from '../../context/AuthContext';
+import { imageUrl } from '../../utils/imageUrl';
 import { 
   Users, 
   Activity, 
@@ -135,7 +136,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentScreen, setScreen, isOp
           <div className="relative shrink-0">
             {user?.profileImageUrl ? (
               <img 
-                src={`${import.meta.env.VITE_API_URL}${user.profileImageUrl}`} 
+                src={imageUrl(user.profileImageUrl)}
                 alt={userName || 'Especialista'} 
                 className="h-11 w-11 rounded-xl object-cover shadow-md border-2 border-white" 
               />
