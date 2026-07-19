@@ -201,7 +201,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
     <div className="space-y-6">
       
       {/* Top Section: Active Patient Info & Flashing Device Status */}
-      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 bg-white border border-slate-100 rounded-2xl p-5 shadow-xs">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-white border border-slate-100 rounded-2xl p-4 sm:p-5 shadow-xs">
         
         {/* Patient Capsule */}
         <div className="flex items-center gap-3">
@@ -285,7 +285,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
 
 
       {!isDeviceConnected ? (
-        <div className="bg-white border border-rose-100 rounded-3xl p-8 shadow-md max-w-2xl mx-auto text-center space-y-6 py-12 animate-in fade-in zoom-in-95 duration-300">
+        <div className="bg-white border border-rose-100 rounded-3xl p-6 sm:p-8 shadow-md max-w-2xl mx-auto text-center space-y-6 py-8 sm:py-12 animate-in fade-in zoom-in-95 duration-300">
           <div className="relative mx-auto w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center text-rose-500 border border-rose-100">
             <Wifi size={40} className="animate-pulse" />
             <span className="absolute bottom-0 right-0 h-4 w-4 bg-rose-500 rounded-full border-2 border-white animate-ping"></span>
@@ -306,7 +306,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
             <ol className="list-decimal list-inside space-y-2 text-slate-600">
               <li>El ESP32 y esta computadora deben estar en la <strong>misma red Wi-Fi</strong>.</li>
               <li>Configura tu sketch de ESP32 para hacer peticiones <strong>HTTP POST</strong> a:
-                <div className="mt-1 font-mono bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-teal-600 font-bold select-all overflow-x-auto whitespace-nowrap">
+                <div className="mt-1 font-mono bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-teal-600 font-bold select-all overflow-x-auto text-[11px]">
                   http://&lt;IP_DE_TU_PC&gt;:3001/api/telemetry
                 </div>
                 <span className="text-[10px] text-slate-400 font-semibold mt-1 block">
@@ -314,7 +314,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
                 </span>
               </li>
               <li>El ESP32 debe transmitir un JSON cada 1 segundo con la siguiente estructura:
-                <pre className="mt-1 bg-slate-900 text-slate-200 font-mono text-[10px] p-3 rounded-lg overflow-x-auto">
+                <pre className="mt-1 bg-slate-900 text-slate-200 font-mono text-[11px] p-3 rounded-lg overflow-x-auto">
 {`{
   "hugForce": 45,      // Presión (0 a 100)
   "rotationX": 15,     // Giroscopio X
@@ -363,13 +363,13 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
             </div>
 
             {/* Recharts panel split into separate telemetry charts */}
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-2 w-full">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 w-full">
               <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
                   ⏱️ Duración de Presionado de Brazos
                 </span>
                 {selectedDeviceType === 'oso' ? (
-                  <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 mt-4">
+                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 mt-4">
                     <div className="h-72 bg-white rounded-2xl p-2 border border-slate-100">
                       <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mb-2">Brazo Izquierdo</div>
                       <ResponsiveContainer width="100%" height="100%">
@@ -514,7 +514,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
           </div>
 
           {/* Device-specific dashboard panels */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {
               selectedDeviceType === 'oso' ? (
                 <>

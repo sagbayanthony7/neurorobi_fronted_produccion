@@ -84,12 +84,12 @@ export const PrintReportModal: React.FC<PrintReportModalProps> = ({
         </div>
 
         {/* Modal body containing the printable A4 sheet */}
-        <div className="p-8 bg-slate-100/50">
+        <div className="p-4 sm:p-8 bg-slate-100/50 overflow-y-auto max-h-[85vh]">
           
           {/* A4 Sheet Container */}
           <div 
             id="printable-clinical-report"
-            className="bg-white mx-auto p-10 shadow-lg border border-slate-200/80 rounded-sm font-sans text-slate-800 max-w-[210mm] min-h-[297mm] box-border"
+            className="bg-white mx-auto p-4 sm:p-10 shadow-lg border border-slate-200/80 rounded-sm font-sans text-slate-800 max-w-[210mm] min-h-0 sm:min-h-[297mm] box-border"
           >
             
             {/* 1. DOCUMENT HEADER */}

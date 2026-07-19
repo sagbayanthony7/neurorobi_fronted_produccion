@@ -71,7 +71,7 @@ export const PatientDirectory: React.FC<PatientDirectoryProps> = ({
       </div>
 
       {/* KPI Stats Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         
         {/* KPI 1: Patients count */}
         <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex items-center gap-4 hover:shadow-md hover:border-slate-200/60 transition-all duration-300">
@@ -109,7 +109,7 @@ export const PatientDirectory: React.FC<PatientDirectoryProps> = ({
       </div>
 
       {/* Main Shortcuts Cards Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         
         {/* Card 1: Iniciar Sesión Rápida */}
         <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
@@ -216,54 +216,88 @@ export const PatientDirectory: React.FC<PatientDirectoryProps> = ({
               <p className="text-xs text-slate-400 font-medium">Aún no se han archivado reportes de consultas.</p>
             </div>
           ) : (
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
-                  <th className="pb-3 pl-2">Fecha</th>
-                  <th className="pb-3">Paciente</th>
-                  <th className="pb-3">Especialista</th>
-                  <th className="pb-3">Duración</th>
-                  <th className="pb-3">Métricas Destacadas</th>
-                  <th className="pb-3">Observaciones de Sesión</th>
-                  <th className="pb-3 text-right pr-2">Acción</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
+            <>
+              {/* Desktop: Table view */}
+              <table className="w-full text-left text-xs border-collapse hidden md:table">
+                <thead>
+                  <tr className="border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                    <th className="pb-3 pl-2">Fecha</th>
+                    <th className="pb-3">Paciente</th>
+                    <th className="pb-3">Especialista</th>
+                    <th className="pb-3">Duración</th>
+                    <th className="pb-3">Métricas</th>
+                    <th className="pb-3">Observaciones</th>
+                    <th className="pb-3 text-right pr-2">Acción</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {sessions.slice(0, 5).map(sess => (
+                    <tr key={sess.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="py-4 pl-2 font-semibold text-slate-600">{sess.date}</td>
+                      <td className="py-4 font-bold text-slate-800">{sess.patientName}</td>
+                      <td className="py-4 font-bold text-slate-700">
+                        <span className="flex items-center gap-1 text-[11px]">
+                          {getRoleIcon(sess.specialistRole)}
+                          {sess.specialistRole.replace('_', ' ')}
+                        </span>
+                      </td>
+                      <td className="py-4 font-medium text-slate-500">{sess.durationSeconds} s</td>
+                      <td className="py-4">
+                        <div className="flex gap-1.5 text-[10px] font-bold uppercase">
+                          <span className="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded">FC {sess.metrics?.avgHeartRate || 0}</span>
+                          <span className="bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded">{sess.metrics?.comfortIndex || 0}%</span>
+                        </div>
+                      </td>
+                      <td className="py-4 max-w-xs truncate text-slate-500 font-medium pr-2" title={sess.notes}>
+                        {sess.notes}
+                      </td>
+                      <td className="py-4 text-right pr-2">
+                        <button
+                          onClick={() => setSelectedSessionForPrint(sess)}
+                          className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all cursor-pointer inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-wide border border-transparent hover:border-teal-100"
+                        >
+                          <Printer size={13} />
+                          Reporte
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Mobile: Card view */}
+              <div className="md:hidden space-y-3">
                 {sessions.slice(0, 5).map(sess => (
-                  <tr key={sess.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="py-4 pl-2 font-semibold text-slate-600">{sess.date}</td>
-                    <td className="py-4 font-bold text-slate-800">{sess.patientName}</td>
-                    <td className="py-4 font-bold text-slate-700">
-                      <span className="flex items-center gap-1 text-[11px]">
+                  <div key={sess.id} className="bg-slate-50/60 border border-slate-100 rounded-xl p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800">{sess.patientName}</span>
+                      <span className="text-[10px] font-semibold text-slate-400">{sess.date}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] text-slate-600">
+                      <span className="flex items-center gap-1">
                         {getRoleIcon(sess.specialistRole)}
                         {sess.specialistRole.replace('_', ' ')}
                       </span>
-                    </td>
-                    <td className="py-4 font-medium text-slate-500">{sess.durationSeconds} s</td>
-                    <td className="py-4">
-                      <div className="flex gap-1.5 text-[9px] font-bold uppercase">
-                        <span className="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded">FC Ø {sess.metrics?.avgHeartRate || 0}</span>
-                        <span className="bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded">Comfort {sess.metrics?.comfortIndex || 0}%</span>
-                        <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded">Alts: {sess.metrics?.spikesCount || 0}</span>
-                      </div>
-                    </td>
-                    <td className="py-4 max-w-xs truncate text-slate-500 font-medium pr-2" title={sess.notes}>
-                      {sess.notes}
-                    </td>
-                    <td className="py-4 text-right pr-2">
-                      <button
-                        onClick={() => setSelectedSessionForPrint(sess)}
-                        className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all cursor-pointer inline-flex items-center gap-1 font-bold text-[10px] uppercase tracking-wide border border-transparent hover:border-teal-100"
-                        title="Imprimir / Exportar Reporte"
-                      >
-                        <Printer size={13} />
-                        Reporte
-                      </button>
-                    </td>
-                  </tr>
+                      <span className="text-slate-300">·</span>
+                      <span>{sess.durationSeconds}s</span>
+                    </div>
+                    <div className="flex gap-1.5 text-[10px] font-bold uppercase">
+                      <span className="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded">FC {sess.metrics?.avgHeartRate || 0}</span>
+                      <span className="bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded">{sess.metrics?.comfortIndex || 0}%</span>
+                      {sess.metrics?.spikesCount ? <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded">Alts: {sess.metrics.spikesCount}</span> : null}
+                    </div>
+                    {sess.notes && <p className="text-[11px] text-slate-500 truncate">{sess.notes}</p>}
+                    <button
+                      onClick={() => setSelectedSessionForPrint(sess)}
+                      className="w-full mt-1 py-2 text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center gap-1.5 font-bold text-[11px] uppercase border border-slate-100 hover:border-teal-200"
+                    >
+                      <Printer size={13} />
+                      Ver Reporte
+                    </button>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </>
           )}
         </div>
       </div>

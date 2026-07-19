@@ -108,7 +108,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentScreen, setScreen, isOp
   };
 
   return (
-    <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-100 flex flex-col h-screen shrink-0 transition-transform duration-300 ${
+    <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-72 lg:w-64 bg-white border-r border-slate-100 flex flex-col h-screen shrink-0 transition-transform duration-300 overflow-y-auto ${
       isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
     }`}>
       {/* Header Logo */}

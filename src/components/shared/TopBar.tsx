@@ -44,7 +44,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
   const CurrentIcon = currentRoleConfig.icon;
 
   return (
-    <header className="h-16 bg-white border-b border-slate-100 px-4 md:px-8 flex items-center justify-between shrink-0">
+    <header className="h-14 lg:h-16 bg-white border-b border-slate-100 px-3 sm:px-4 md:px-8 flex items-center justify-between shrink-0 overflow-x-auto">
       
       {/* LEFT: Context Active Patient Indicator + Hamburger Menu for Mobile */}
       <div className="flex items-center gap-3 min-w-0">
@@ -80,7 +80,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
       </div>
 
       {/* RIGHT: Specialist Role Selector Segmented Controller */}
-      <div className="flex items-center gap-3 md:gap-4 shrink-0">
+      <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0 min-w-0">
         {/* Role Selector Badge with Select dropdown styled nicely */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider hidden md:inline">
@@ -92,7 +92,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
                 <select
                   value={activeRole}
                   onChange={(e) => setActiveRole(e.target.value as SpecialistRole)}
-                  className="appearance-none bg-slate-50 hover:bg-slate-100/80 border border-slate-100 text-xs font-bold text-slate-700 pl-9 pr-8 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer shadow-sm transition-all"
+                  className="appearance-none bg-slate-50 hover:bg-slate-100/80 border border-slate-100 text-xs font-bold text-slate-700 pl-9 pr-8 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer shadow-sm transition-all max-w-[160px] sm:max-w-none"
                 >
                   <option value="PSICOLOGIA_CLINICA">Psicología Clínica</option>
                   <option value="EDUCACION_ESPECIAL">Educación Especial</option>

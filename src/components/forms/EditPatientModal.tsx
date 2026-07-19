@@ -197,7 +197,7 @@ export const EditPatientModal: React.FC<EditPatientModalProps> = ({
             </div>
 
             {/* Edad + Diagnóstico */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Edad (Años)</label>
                 <input

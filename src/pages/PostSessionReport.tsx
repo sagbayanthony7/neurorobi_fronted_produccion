@@ -152,41 +152,41 @@ export const PostSessionReport: React.FC<PostSessionReportProps> = ({
       </div>
 
       {/* 2. Analytical Selector Segment Buttons (A, B, C) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
         
         {/* Button A: Pressure */}
         <button
           onClick={() => setActiveTab('pressure')}
-          className={`flex items-center gap-3 px-5 py-4 border-2 rounded-2xl text-left font-bold text-xs uppercase tracking-wider cursor-pointer transition-all ${getTabBorderColor('pressure')}`}
+          className={`flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 px-2 sm:px-5 py-3 sm:py-4 border-2 rounded-2xl text-center sm:text-left font-bold text-[10px] sm:text-xs uppercase tracking-wider cursor-pointer transition-all ${getTabBorderColor('pressure')}`}
         >
           <Sparkles size={16} />
-          <div className="flex flex-col items-start leading-none gap-1">
-            <span>A. Presión / Abrazos</span>
-            <span className="text-[9px] font-bold opacity-60">Comfort: {metrics.comfortIndex}%</span>
+          <div className="flex flex-col items-center sm:items-start leading-none gap-0.5 sm:gap-1">
+            <span>Presión</span>
+            <span className="text-[9px] font-bold opacity-60 hidden sm:block">Comfort: {metrics.comfortIndex}%</span>
           </div>
         </button>
 
         {/* Button B: Heart Rate */}
         <button
           onClick={() => setActiveTab('heartRate')}
-          className={`flex items-center gap-3 px-5 py-4 border-2 rounded-2xl text-left font-bold text-xs uppercase tracking-wider cursor-pointer transition-all ${getTabBorderColor('heartRate')}`}
+          className={`flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 px-2 sm:px-5 py-3 sm:py-4 border-2 rounded-2xl text-center sm:text-left font-bold text-[10px] sm:text-xs uppercase tracking-wider cursor-pointer transition-all ${getTabBorderColor('heartRate')}`}
         >
           <Heart size={16} fill={activeTab === 'heartRate' ? 'currentColor' : 'none'} />
-          <div className="flex flex-col items-start leading-none gap-1">
-            <span>B. Ritmo Cardíaco / Pulso</span>
-            <span className="text-[9px] font-bold opacity-60">FC Prom: {metrics.avgHeartRate} lpm</span>
+          <div className="flex flex-col items-center sm:items-start leading-none gap-0.5 sm:gap-1">
+            <span>Cardíaco</span>
+            <span className="text-[9px] font-bold opacity-60 hidden sm:block">FC Prom: {metrics.avgHeartRate} lpm</span>
           </div>
         </button>
 
         {/* Button C: Kinematic */}
         <button
           onClick={() => setActiveTab('gyro')}
-          className={`flex items-center gap-3 px-5 py-4 border-2 rounded-2xl text-left font-bold text-xs uppercase tracking-wider cursor-pointer transition-all ${getTabBorderColor('gyro')}`}
+          className={`flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 px-2 sm:px-5 py-3 sm:py-4 border-2 rounded-2xl text-center sm:text-left font-bold text-[10px] sm:text-xs uppercase tracking-wider cursor-pointer transition-all ${getTabBorderColor('gyro')}`}
         >
           <ActivitySquare size={16} />
-          <div className="flex flex-col items-start leading-none gap-1">
-            <span>C. Cinemática / Movimiento</span>
-            <span className="text-[9px] font-bold opacity-60">Estable: {metrics.calmStatePercentage}%</span>
+          <div className="flex flex-col items-center sm:items-start leading-none gap-0.5 sm:gap-1">
+            <span>Cinemática</span>
+            <span className="text-[9px] font-bold opacity-60 hidden sm:block">Estable: {metrics.calmStatePercentage}%</span>
           </div>
         </button>
 
@@ -208,7 +208,7 @@ export const PostSessionReport: React.FC<PostSessionReportProps> = ({
           </div>
 
           {/* Recharts chart */}
-          <div className="h-64 w-full overflow-y-auto">
+          <div className="h-64 w-full overflow-hidden">
             {sensorHistory.length === 0 ? (
               <div className="h-full flex items-center justify-center border border-dashed border-slate-100 rounded-2xl bg-slate-50/30">
                 <p className="text-xs text-slate-400 font-medium">No hay registros de sensores en memoria para esta sesión (Mocked base predeterminada).</p>

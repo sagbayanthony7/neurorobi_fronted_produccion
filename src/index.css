@@ -11,6 +11,12 @@
   html, body {
     @apply bg-slate-50 text-slate-800 antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+  }
+  html {
+    scroll-behavior: smooth;
   }
 }
 

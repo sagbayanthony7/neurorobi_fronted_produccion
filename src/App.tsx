@@ -77,7 +77,7 @@ const AppContent: React.FC = () => {
         <TopBar onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
 
         {/* Dynamic Screen Viewport Area */}
-        <main className="flex-1 overflow-y-auto p-8 relative">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 relative">
           
           <div className="max-w-7xl mx-auto transition-all duration-500 ease-in-out">
             
@@ -132,7 +132,7 @@ const AppContent: React.FC = () => {
       </div>
 
       {/* 3. Floating Clinical Toast Notifications Panel */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none">
+      <div className="fixed bottom-4 left-4 right-4 sm:bottom-6 sm:right-6 sm:left-auto z-50 flex flex-col gap-2.5 max-w-sm w-auto sm:w-full pointer-events-none">
         {toasts.map((toast) => {
           
           let cardStyle = "pointer-events-auto w-full p-4 rounded-2xl shadow-xl border flex items-start gap-3 transition-all duration-500 animate-in slide-in-from-right-10 ";
@@ -154,9 +154,9 @@ const AppContent: React.FC = () => {
 
               <button
                 onClick={() => removeToast(toast.id)}
-                className="text-slate-400 hover:text-slate-700 shrink-0 self-start p-0.5 rounded-lg hover:bg-black/5 transition-all"
+                className="text-slate-400 hover:text-slate-700 shrink-0 self-start p-2 rounded-lg hover:bg-black/5 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
               >
-                <X size={12} />
+                <X size={14} />
               </button>
 
             </div>

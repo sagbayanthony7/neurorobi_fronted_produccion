@@ -131,10 +131,10 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
       </div>
 
       {/* Main Workspace split */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         
         {/* LEFT COLUMN: Patient Catalog List */}
-        <div className="lg:col-span-1 flex flex-col bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden min-h-[550px]">
+        <div className="lg:col-span-1 flex flex-col bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden max-h-[400px] md:max-h-[550px]">
           
           <div className="p-4 border-b border-slate-50">
             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Directorio Clínico</h3>
@@ -153,7 +153,7 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-50 max-h-[500px]">
+          <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
             {filteredPatients.length === 0 ? (
               <div className="text-center py-12 px-4">
                 <p className="text-xs text-slate-400 font-medium">No se encontraron pacientes.</p>
@@ -336,14 +336,15 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
                       </div>
                     ) : (
                       <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs border-collapse">
+                        {/* Desktop table */}
+                        <table className="w-full text-left text-xs border-collapse hidden md:table">
                           <thead>
-                            <tr className="border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                            <tr className="border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider text-[11px]">
                               <th className="pb-2">Fecha</th>
                               <th className="pb-2">Especialista</th>
                               <th className="pb-2">Dispositivo</th>
                               <th className="pb-2">Duración</th>
-                              <th className="pb-2">Métricas Destacadas</th>
+                              <th className="pb-2">Métricas</th>
                               <th className="pb-2 text-right pr-2">Acción</th>
                             </tr>
                           </thead>
@@ -352,26 +353,25 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
                               <tr key={sess.id} className="hover:bg-slate-50/50 transition-colors">
                                 <td className="py-2.5 font-semibold text-slate-600">{sess.date}</td>
                                 <td className="py-2.5 font-bold text-slate-700">
-                                  <span className="flex items-center gap-1 text-[10px]">
+                                  <span className="flex items-center gap-1 text-[11px]">
                                     {getRoleIcon(sess.specialistRole)}
                                     {sess.specialistRole.replace('_', ' ')}
                                   </span>
                                 </td>
-                                <td className="py-2.5 text-slate-500 uppercase text-[10px] font-bold">{sess.deviceType === 'oso' ? 'Oso' : 'Pulsera'}</td>
-                                <td className="py-2.5 font-medium text-slate-500">{sess.durationSeconds} s</td>
+                                <td className="py-2.5 text-slate-500 uppercase text-[11px] font-bold">{sess.deviceType === 'oso' ? 'Oso' : 'Pulsera'}</td>
+                                <td className="py-2.5 font-medium text-slate-500">{sess.durationSeconds}s</td>
                                 <td className="py-2.5">
-                                  <div className="flex gap-1 text-[9px] font-bold uppercase">
-                                    <span className="bg-rose-50 text-rose-700 px-1 rounded">FC Ø {sess.metrics.avgHeartRate}</span>
-                                    <span className="bg-teal-50 text-teal-700 px-1 rounded">Comfort {sess.metrics.comfortIndex}%</span>
+                                  <div className="flex gap-1 text-[10px] font-bold uppercase">
+                                    <span className="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded">FC {sess.metrics.avgHeartRate}</span>
+                                    <span className="bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded">{sess.metrics.comfortIndex}%</span>
                                   </div>
                                 </td>
                                 <td className="py-2.5 text-right pr-2">
                                   <button
                                     onClick={() => setSelectedSessionForPrint(sess)}
-                                    className="p-1 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all cursor-pointer inline-flex items-center gap-1 font-bold text-[9px] uppercase tracking-wide border border-transparent hover:border-teal-100"
-                                    title="Imprimir / Exportar Reporte"
+                                    className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all cursor-pointer inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-wide border border-transparent hover:border-teal-100"
                                   >
-                                    <Printer size={11} />
+                                    <Printer size={12} />
                                     Reporte
                                   </button>
                                 </td>
@@ -379,13 +379,40 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
                             ))}
                           </tbody>
                         </table>
+                        {/* Mobile cards */}
+                        <div className="md:hidden space-y-3">
+                          {patientSessions.map(sess => (
+                            <div key={sess.id} className="bg-slate-50/60 border border-slate-100 rounded-xl p-3 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[11px] font-bold text-slate-800">{sess.date}</span>
+                                <span className="text-[10px] font-semibold text-slate-400 uppercase">{sess.deviceType === 'oso' ? 'Oso' : 'Pulsera'}</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-[11px] text-slate-600">
+                                <span className="flex items-center gap-1">{getRoleIcon(sess.specialistRole)}{sess.specialistRole.replace('_', ' ')}</span>
+                                <span className="text-slate-300">·</span>
+                                <span>{sess.durationSeconds}s</span>
+                              </div>
+                              <div className="flex gap-1 text-[10px] font-bold uppercase">
+                                <span className="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded">FC {sess.metrics.avgHeartRate}</span>
+                                <span className="bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded">{sess.metrics.comfortIndex}%</span>
+                              </div>
+                              <button
+                                onClick={() => setSelectedSessionForPrint(sess)}
+                                className="w-full py-2 text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center gap-1.5 font-bold text-[11px] uppercase border border-slate-100 hover:border-teal-200"
+                              >
+                                <Printer size={12} />
+                                Ver Reporte
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-12 text-center flex flex-col items-center justify-center h-full min-h-[400px]">
+              <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-8 md:p-12 text-center flex flex-col items-center justify-center h-full min-h-[200px] md:min-h-[400px]">
                 <div className="h-16 w-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 mb-4">
                   <User size={32} />
                 </div>
