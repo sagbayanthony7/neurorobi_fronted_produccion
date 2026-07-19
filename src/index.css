@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-teal: #0d9488;
+  --color-brand-emerald: #10b981;
+  --color-brand-rose: #e11d48;
+  --color-brand-indigo: #6366f1;
+}
+
+@layer base {
+  html, body {
+    @apply bg-slate-50 text-slate-800 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@keyframes live-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+}
+
+.animate-live-pulse {
+  animation: live-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom smooth transitions for active tabs and view states */
+.transition-all-500 {
+  transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom styling for Recharts tooltips */
+.recharts-default-tooltip {
+  @apply rounded-xl border border-slate-100 bg-white/95 p-3 shadow-xl backdrop-blur-md;
+}
+
+/* Print styles for generating clean, formal clinical reports */
+@media print {
+  body, html {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt !important;
+  }
+  
+  /* Hide all elements on screen except the printable report block */
+  body * {
+    visibility: hidden !important;
+  }
+  
+  #printable-clinical-report, #printable-clinical-report * {
+    visibility: visible !important;
+  }
+  
+  /* Use position: fixed so it is always anchored to the print page top,
+     not to any positioned ancestor (modal overlay, modal container, etc.) */
+  #printable-clinical-report {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Prevent background color stripping in browser prints */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Ensure page margins and breaks look professional */
+  @page {
+    margin: 1.5cm;
+  }
+}

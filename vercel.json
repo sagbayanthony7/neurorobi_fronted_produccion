@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    { "source": "/((?!assets/).*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/socket.io/(.*)",
+      "headers": [
+        { "key": "Connection", "value": "keep-alive" }
+      ]
+    }
+  ]
+}
