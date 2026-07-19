@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { imageUrl } from '../utils/imageUrl';
 import { 
   Users, Plus, Trash2, Edit3, X, Search, 
   Heart, Brain, Sparkles, Shield, 
@@ -317,9 +318,13 @@ export const TherapistManagement: React.FC<{ onShowToast: (msg: string, type?: '
                 }`}
               >
                 <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${config.colorClass}`}>
-                    <Icon size={18} />
-                  </div>
+                  {spec.profileImageUrl ? (
+                    <img src={imageUrl(spec.profileImageUrl)} alt={spec.name} className="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0" />
+                  ) : (
+                    <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${config.colorClass}`}>
+                      <Icon size={18} />
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-bold text-slate-800 truncate">{spec.name}</h3>
                     <p className="text-[11px] text-slate-500 truncate">{spec.email}</p>
@@ -348,7 +353,9 @@ export const TherapistManagement: React.FC<{ onShowToast: (msg: string, type?: '
                   {(() => {
                     const config = getSpecialtyConfig(selectedSpecialist);
                     const Icon = config.icon;
-                    return (
+                    return selectedSpecialist.profileImageUrl ? (
+                      <img src={imageUrl(selectedSpecialist.profileImageUrl)} alt={selectedSpecialist.name} className="w-12 h-12 rounded-xl object-cover border border-slate-200" />
+                    ) : (
                       <div className={`w-12 h-12 rounded-xl border flex items-center justify-center ${config.colorClass}`}>
                         <Icon size={22} />
                       </div>
