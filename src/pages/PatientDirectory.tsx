@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { usePatients } from '../context/PatientContext';
+import { formatDate } from '../utils/formatDate';
 import { 
   Users, 
   Activity, 
@@ -233,7 +234,7 @@ export const PatientDirectory: React.FC<PatientDirectoryProps> = ({
                 <tbody className="divide-y divide-slate-50">
                   {sessions.slice(0, 5).map(sess => (
                     <tr key={sess.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="py-4 pl-2 font-semibold text-slate-600">{sess.date}</td>
+                      <td className="py-4 pl-2 font-semibold text-slate-600">{formatDate(sess.date)}</td>
                       <td className="py-4 font-bold text-slate-800">{sess.patientName}</td>
                       <td className="py-4 font-bold text-slate-700">
                         <span className="flex items-center gap-1 text-[11px]">
@@ -271,7 +272,7 @@ export const PatientDirectory: React.FC<PatientDirectoryProps> = ({
                   <div key={sess.id} className="bg-slate-50/60 border border-slate-100 rounded-xl p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-800">{sess.patientName}</span>
-                      <span className="text-[10px] font-semibold text-slate-400">{sess.date}</span>
+                      <span className="text-[10px] font-semibold text-slate-400">{formatDate(sess.date)}</span>
                     </div>
                     <div className="flex items-center gap-2 text-[11px] text-slate-600">
                       <span className="flex items-center gap-1">

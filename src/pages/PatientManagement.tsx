@@ -3,6 +3,7 @@ import { usePatients } from '../context/PatientContext';
 import { RegisterPatientModal } from '../components/forms/RegisterPatientModal';
 import { EditPatientModal } from '../components/forms/EditPatientModal';
 import { imageUrl } from '../utils/imageUrl';
+import { formatDate } from '../utils/formatDate';
 import { 
   Search, 
   User, 
@@ -352,7 +353,7 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
                           <tbody className="divide-y divide-slate-50">
                             {patientSessions.map(sess => (
                               <tr key={sess.id} className="hover:bg-slate-50/50 transition-colors">
-                                <td className="py-2.5 font-semibold text-slate-600">{sess.date}</td>
+                                <td className="py-2.5 font-semibold text-slate-600">{formatDate(sess.date)}</td>
                                 <td className="py-2.5 font-bold text-slate-700">
                                   <span className="flex items-center gap-1 text-[11px]">
                                     {getRoleIcon(sess.specialistRole)}
@@ -385,7 +386,7 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
                           {patientSessions.map(sess => (
                             <div key={sess.id} className="bg-slate-50/60 border border-slate-100 rounded-xl p-3 space-y-2">
                               <div className="flex items-center justify-between">
-                                <span className="text-[11px] font-bold text-slate-800">{sess.date}</span>
+                                <span className="text-[11px] font-bold text-slate-800">{formatDate(sess.date)}</span>
                                 <span className="text-[10px] font-semibold text-slate-400 uppercase">{sess.deviceType === 'oso' ? 'Oso' : 'Pulsera'}</span>
                               </div>
                               <div className="flex items-center gap-2 text-[11px] text-slate-600">
