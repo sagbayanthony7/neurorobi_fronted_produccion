@@ -71,8 +71,7 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({ onClose, onSuc
 
       const res = await axios.put(
         `${import.meta.env.VITE_API_URL}/api/auth/profile/${user.id}`,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
+        formData
       );
 
       const updatedUser = { ...user, ...res.data };

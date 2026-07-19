@@ -64,9 +64,7 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
         formData.append('profileImage', profileImage);
       }
 
-      const res = await axios.post(`${API_URL}/patients`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await axios.post(`${API_URL}/patients`, formData);
       const newPatient = res.data;
       setPatients(prev => [newPatient, ...prev]);
       return newPatient;
@@ -94,9 +92,7 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
         formData.append('profileImage', profileImage);
       }
 
-      const res = await axios.put(`${API_URL}/patients/${id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await axios.put(`${API_URL}/patients/${id}`, formData);
       const updated = res.data;
       setPatients(prev => prev.map(p => p.id === id ? updated : p));
       if (activePatient?.id === id) {
