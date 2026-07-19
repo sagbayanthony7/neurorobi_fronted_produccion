@@ -8,6 +8,28 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 
+function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const size = 200;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d')!;
+      const minDim = Math.min(img.width, img.height);
+      const sx = (img.width - minDim) / 2;
+      const sy = (img.height - minDim) / 2;
+      ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+      resolve(canvas.toDataURL('image/webp', 0.6));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
 interface EditProfileFormProps {
   onClose: () => void;
   onSuccess: () => void;
@@ -64,14 +86,18 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({ onClose, onSuc
     setLoading(true);
 
     try {
-      const formData = new FormData();
-      formData.append('name', name.trim());
-      if (password) formData.append('password', password);
-      if (profileImage) formData.append('profileImage', profileImage);
+      let profileImageBase64: string | undefined;
+      if (profileImage) {
+        profileImageBase64 = await compressImage(profileImage);
+      }
+
+      const payload: any = { name: name.trim() };
+      if (password) payload.password = password;
+      if (profileImageBase64) payload.profileImageBase64 = profileImageBase64;
 
       const res = await axios.put(
         `${import.meta.env.VITE_API_URL}/api/auth/profile/${user.id}`,
-        formData
+        payload
       );
 
       const updatedUser = { ...user, ...res.data };

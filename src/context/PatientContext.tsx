@@ -19,6 +19,28 @@ interface PatientContextType {
   loadDemoSession: () => void;
 }
 
+function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const size = 200;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d')!;
+      const minDim = Math.min(img.width, img.height);
+      const sx = (img.width - minDim) / 2;
+      const sy = (img.height - minDim) / 2;
+      ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+      resolve(canvas.toDataURL('image/webp', 0.6));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
 const PatientContext = createContext<PatientContextType | undefined>(undefined);
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api`;
@@ -55,16 +77,18 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
     profileImage: File | null
   ): Promise<Patient | undefined> => {
     try {
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('age', age.toString());
-      formData.append('diagnosis', diagnosis);
-      formData.append('initialObservation', initialObservation);
+      let profileImageBase64: string | null = null;
       if (profileImage) {
-        formData.append('profileImage', profileImage);
+        profileImageBase64 = await compressImage(profileImage);
       }
 
-      const res = await axios.post(`${API_URL}/patients`, formData);
+      const res = await axios.post(`${API_URL}/patients`, {
+        name,
+        age,
+        diagnosis,
+        initialObservation,
+        profileImageBase64
+      });
       const newPatient = res.data;
       setPatients(prev => [newPatient, ...prev]);
       return newPatient;
@@ -83,16 +107,18 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
     profileImage: File | null
   ): Promise<Patient | undefined> => {
     try {
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('age', age.toString());
-      formData.append('diagnosis', diagnosis);
-      formData.append('initialObservation', initialObservation);
+      let profileImageBase64: string | null = null;
       if (profileImage) {
-        formData.append('profileImage', profileImage);
+        profileImageBase64 = await compressImage(profileImage);
       }
 
-      const res = await axios.put(`${API_URL}/patients/${id}`, formData);
+      const res = await axios.put(`${API_URL}/patients/${id}`, {
+        name,
+        age,
+        diagnosis,
+        initialObservation,
+        profileImageBase64
+      });
       const updated = res.data;
       setPatients(prev => prev.map(p => p.id === id ? updated : p));
       if (activePatient?.id === id) {
