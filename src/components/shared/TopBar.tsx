@@ -1,14 +1,11 @@
 import React from 'react';
 import { usePatients } from '../../context/PatientContext';
 import { useRole } from '../../context/RoleContext';
-import type { SpecialistRole } from '../../types';
+import { useAuth } from '../../context/AuthContext';
 import { 
-  Heart, 
-  Brain, 
-  Sparkles, 
   UserCheck,
-  ChevronDown,
-  Menu
+  Menu,
+  Shield
 } from 'lucide-react';
 
 interface TopBarProps {
@@ -17,31 +14,10 @@ interface TopBarProps {
 
 export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
   const { activePatient } = usePatients();
-  const { activeRole, setActiveRole, isRoleSelectorEnabled } = useRole();
+  const { activeRole } = useRole();
+  const { user } = useAuth();
 
-  const roles: { value: SpecialistRole; label: string; icon: any; color: string }[] = [
-    { 
-      value: 'PSICOLOGIA_CLINICA', 
-      label: 'Psicología Clínica', 
-      icon: Heart, 
-      color: 'text-rose-500 bg-rose-50 border-rose-100 hover:bg-rose-100/50' 
-    },
-    { 
-      value: 'EDUCACION_ESPECIAL', 
-      label: 'Educación Especial', 
-      icon: Brain, 
-      color: 'text-indigo-500 bg-indigo-50 border-indigo-100 hover:bg-indigo-100/50' 
-    },
-    { 
-      value: 'FISIOTERAPIA', 
-      label: 'Fisioterapia', 
-      icon: Sparkles, 
-      color: 'text-emerald-500 bg-emerald-50 border-emerald-100 hover:bg-emerald-100/50' 
-    }
-  ];
-
-  const currentRoleConfig = roles.find(r => r.value === activeRole) || roles[0];
-  const CurrentIcon = currentRoleConfig.icon;
+  const isAdmin = user?.role === 'ADMIN';
 
   return (
     <header className="h-14 lg:h-16 bg-white border-b border-slate-100 px-3 sm:px-4 md:px-8 flex items-center justify-between shrink-0 overflow-x-auto">
@@ -56,7 +32,14 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
           <Menu size={18} />
         </button>
 
-        {activePatient ? (
+        {isAdmin ? (
+          <div className="flex items-center gap-2 bg-amber-50/60 border border-amber-100 px-2.5 md:px-3 py-1.5 rounded-full shadow-sm">
+            <Shield size={14} className="text-amber-600 shrink-0" />
+            <span className="text-xs font-bold text-slate-700 hidden sm:inline">
+              Panel de Administración
+            </span>
+          </div>
+        ) : activePatient ? (
           <div className="flex items-center gap-2 bg-emerald-50/60 border border-emerald-100 px-2.5 md:px-3 py-1.5 rounded-full shadow-sm min-w-0">
             <UserCheck size={14} className="text-emerald-600 animate-pulse shrink-0" />
             <span className="text-xs font-bold text-slate-700 hidden sm:inline shrink-0">
@@ -79,49 +62,23 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar }) => {
         )}
       </div>
 
-      {/* RIGHT: Specialist Role Selector Segmented Controller */}
+      {/* RIGHT: Active Specialty Badge */}
       <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0 min-w-0">
-        {/* Role Selector Badge with Select dropdown styled nicely */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider hidden md:inline">
-            Especialidad Activa:
+            {isAdmin ? 'Rol:' : 'Especialidad:'}
           </span>
-          <div className="relative group/role">
-            {isRoleSelectorEnabled ? (
-              <>
-                <select
-                  value={activeRole}
-                  onChange={(e) => setActiveRole(e.target.value as SpecialistRole)}
-                  className="appearance-none bg-slate-50 hover:bg-slate-100/80 border border-slate-100 text-xs font-bold text-slate-700 pl-9 pr-8 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer shadow-sm transition-all max-w-[160px] sm:max-w-none"
-                >
-                  <option value="PSICOLOGIA_CLINICA">Psicología Clínica</option>
-                  <option value="EDUCACION_ESPECIAL">Educación Especial</option>
-                  <option value="FISIOTERAPIA">Fisioterapia</option>
-                </select>
-                {/* Right arrow decoration for dropdown */}
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                  <ChevronDown size={12} />
-                </div>
-              </>
-            ) : (
-              <div className="bg-slate-50 border border-slate-100 text-xs font-bold text-slate-700 pl-9 pr-3.5 py-2 rounded-xl shadow-xs">
-                {currentRoleConfig.label}
-              </div>
-            )}
-            
-            {/* Left custom icon based on active role */}
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-              <CurrentIcon size={14} className={currentRoleConfig.color.split(' ')[0]} />
-            </div>
+          <div className="bg-slate-50 border border-slate-100 text-xs font-bold text-slate-700 px-3 py-2 rounded-xl shadow-xs">
+            {activeRole}
           </div>
         </div>
 
-        {/* Device Sync LED Badge */}
-        <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-100 px-2 md:px-2.5 py-1.5 rounded-xl shadow-xs">
-          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
-          <span className="text-[10px] font-bold text-slate-500 tracking-wider hidden sm:inline">ESP32: ON</span>
-        </div>
-
+        {!isAdmin && (
+          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-100 px-2 md:px-2.5 py-1.5 rounded-xl shadow-xs">
+            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
+            <span className="text-[10px] font-bold text-slate-500 tracking-wider hidden sm:inline">ESP32: ON</span>
+          </div>
+        )}
       </div>
 
     </header>

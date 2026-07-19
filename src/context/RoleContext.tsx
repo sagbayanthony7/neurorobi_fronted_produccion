@@ -1,47 +1,35 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { SpecialistRole } from '../types';
 import { useAuth } from './AuthContext';
 
 interface RoleContextType {
-  activeRole: SpecialistRole;
-  setActiveRole: (role: SpecialistRole) => void;
+  activeRole: string;
+  setActiveRole: (role: string) => void;
   isRoleSelectorEnabled: boolean;
 }
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { userRole, isAuthenticated } = useAuth();
+  const { userRole, user, isAuthenticated } = useAuth();
   
-  // Set default active clinical role
-  const [activeRole, setActiveRoleState] = useState<SpecialistRole>('PSICOLOGIA_CLINICA');
-
-  // Determine if user can manually toggle roles (only if they are an ADMIN)
+  const [activeRole, setActiveRoleState] = useState<string>(user?.specialty?.name || 'Sin especialidad');
   const isRoleSelectorEnabled = userRole === 'ADMIN';
 
-  // Synchronize active role with user's role upon login/logout or change
   useEffect(() => {
     if (!isAuthenticated || !userRole) {
-      setActiveRoleState('PSICOLOGIA_CLINICA');
+      setActiveRoleState('Sin especialidad');
       return;
     }
 
     if (userRole === 'ADMIN') {
-      // Admin can switch, so default to previously saved role or PSICOLOGIA_CLINICA
       const saved = localStorage.getItem('neurorobi_admin_active_role');
-      if (saved && ['PSICOLOGIA_CLINICA', 'EDUCACION_ESPECIAL', 'FISIOTERAPIA'].includes(saved)) {
-        setActiveRoleState(saved as SpecialistRole);
-      } else {
-        setActiveRoleState('PSICOLOGIA_CLINICA');
-      }
+      setActiveRoleState(saved || 'Administrador');
     } else {
-      // Regular user's active role is strictly bound to their profile role
-      setActiveRoleState(userRole as SpecialistRole);
+      setActiveRoleState(user?.specialty?.name || 'Sin especialidad');
     }
-  }, [userRole, isAuthenticated]);
+  }, [userRole, isAuthenticated, user]);
 
-  const setActiveRole = (role: SpecialistRole) => {
-    // Only allow updating the role if the user is ADMIN
+  const setActiveRole = (role: string) => {
     if (userRole === 'ADMIN') {
       setActiveRoleState(role);
       localStorage.setItem('neurorobi_admin_active_role', role);

@@ -1,6 +1,6 @@
 // Absolute TypeScript safety interfaces for Neurorobi IoT clinical platform
 
-export type SpecialistRole = 'PSICOLOGIA_CLINICA' | 'EDUCACION_ESPECIAL' | 'FISIOTERAPIA' | 'ADMIN';
+export type SpecialistRole = string;
 
 export type ClinicalDiagnosis = string;
 
@@ -8,6 +8,13 @@ export type PatientStatus =
   | 'Listo para Consulta' 
   | 'En Sesión' 
   | 'Sesión Completada';
+
+export interface Specialty {
+  id: string;
+  name: string;
+  color: string;
+  icon: string;
+}
 
 export interface Patient {
   id: string;

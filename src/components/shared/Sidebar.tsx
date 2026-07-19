@@ -168,33 +168,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentScreen, setScreen, isOp
       {/* Main Navigation */}
       <nav className="flex-1 px-4 py-2">
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4 block mb-3">
-          Módulos Principales
+          {user?.role === 'ADMIN' ? 'Supervisión' : 'Módulos Principales'}
         </span>
         
-        {renderNavItem('directory', 'Inicio y Consultas', ClipboardList, false)}
-        
-        {renderNavItem('patients', 'Gestión de Pacientes', Users, false)}
-        
-        {renderNavItem(
-          'telemetry', 
-          'Telemetría en Vivo', 
-          Activity, 
-          false
-        )}
-        
-        {renderNavItem(
-          'report', 
-          'Auditoría y Reporte', 
-          FilePieChart, 
-          false
-        )}
-
-        {user?.role === 'ADMIN' && (
+        {user?.role === 'ADMIN' ? (
           <>
+            {renderNavItem('directory', 'Panel de Control', ClipboardList, false)}
+            {renderNavItem('patients', 'Pacientes', Users, false)}
+            {renderNavItem('report', 'Reportes y Auditoría', FilePieChart, false)}
+            
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4 block mb-3 mt-4">
               Administración
             </span>
             {renderNavItem('therapists', 'Gestión de Terapeutas', Shield, false)}
+          </>
+        ) : (
+          <>
+            {renderNavItem('directory', 'Inicio y Consultas', ClipboardList, false)}
+            {renderNavItem('patients', 'Gestión de Pacientes', Users, false)}
+            {renderNavItem('telemetry', 'Telemetría en Vivo', Activity, false)}
+            {renderNavItem('report', 'Auditoría y Reporte', FilePieChart, false)}
           </>
         )}
       </nav>

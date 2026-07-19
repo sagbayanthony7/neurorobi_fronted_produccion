@@ -8,7 +8,7 @@ interface AuthContextType {
   userName: string | null;
   userRole: string | null;
   token: string | null;
-  user: { id: string; email: string; name: string; role: string; profileImageUrl?: string } | null;
+  user: { id: string; email: string; name: string; role: string; specialtyId?: string; specialty?: { id: string; name: string; color: string; icon: string }; profileImageUrl?: string } | null;
   login: (email: string, pass: string) => Promise<boolean>;
   logout: () => void;
   getToken: () => string | null;
@@ -43,7 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return localStorage.getItem('neurorobi_user_role');
   });
 
-  const [user, setUser] = useState<{ id: string; email: string; name: string; role: string; profileImageUrl?: string } | null>(() => {
+  const [user, setUser] = useState<{ id: string; email: string; name: string; role: string; specialtyId?: string; specialty?: { id: string; name: string; color: string; icon: string }; profileImageUrl?: string } | null>(() => {
     const u = localStorage.getItem('neurorobi_user');
     if (u) {
       try {
