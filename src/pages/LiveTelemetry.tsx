@@ -356,7 +356,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
                 ) : (
                   <>
                     <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-rose-500"></span> Pulso (HR): {latestReading.heartRate} bpm</span>
-                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-indigo-500"></span> Cinemática: {rotationMagnitude}°/s</span>
+                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500"></span> Temperatura: {latestReading.temperatureC > 0 ? `${latestReading.temperatureC}°C` : 'N/A'}</span>
                   </>
                 )}
               </div>
@@ -461,24 +461,33 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
 
               <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
-                  🔄 Intensidad de Sacudón / Cinemática
+                  {selectedDeviceType === 'oso' ? '🔄 Intensidad de Sacudón / Cinemática' : '🌡️ Temperatura Corporal (LM35)'}
                 </span>
                 <div className="h-72 mt-4">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={streamData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                       <defs>
-                        <linearGradient id="colorShake" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2}/>
-                          <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
-                        </linearGradient>
-                        <linearGradient id="colorMotion" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#ec4899" stopOpacity={0.2}/>
-                          <stop offset="95%" stopColor="#ec4899" stopOpacity={0}/>
-                        </linearGradient>
+                        {selectedDeviceType === 'oso' ? (
+                          <>
+                            <linearGradient id="colorShake" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2}/>
+                              <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                            </linearGradient>
+                            <linearGradient id="colorMotion" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#ec4899" stopOpacity={0.2}/>
+                              <stop offset="95%" stopColor="#ec4899" stopOpacity={0}/>
+                            </linearGradient>
+                          </>
+                        ) : (
+                          <linearGradient id="colorTemp" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.2}/>
+                            <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                          </linearGradient>
+                        )}
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                       <XAxis dataKey="timestamp" stroke="#94a3b8" fontSize={9} tickLine={false} />
-                      <YAxis stroke="#94a3b8" fontSize={9} tickLine={false} domain={[0, 150]} />
+                      <YAxis stroke="#94a3b8" fontSize={9} tickLine={false} domain={selectedDeviceType === 'oso' ? [0, 150] : [30, 42]} />
                       <Tooltip />
                       <Legend verticalAlign="top" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 10, fontWeight: 'bold' }} />
                       {selectedDeviceType === 'oso' ? (
@@ -496,12 +505,12 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
                       ) : (
                         <Area
                           type="monotone"
-                          name="Magnitud de Rotación"
-                          dataKey="rotationMagnitude"
-                          stroke="#ec4899"
+                          name="Temperatura (°C)"
+                          dataKey="temperatureC"
+                          stroke="#f59e0b"
                           strokeWidth={2.5}
                           fillOpacity={1}
-                          fill="url(#colorMotion)"
+                          fill="url(#colorTemp)"
                           activeDot={{ r: 5 }}
                           isAnimationActive={false}
                         />
@@ -623,58 +632,51 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
                 </>
               ) : (
                 <>
-                  {/* 1. Sensor de Presión / Fuerza (FSR) card */}
+                  {/* 1. Sensor de Temperatura (LM35) */}
                   <div className="space-y-2">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
-                      🎛️ 1. Sensor FSR (Fuerza y Abrazo)
+                      🌡️ 1. Sensor de Temperatura (LM35)
                     </span>
-                    {isFsrConnected ? (
+                    {latestReading.temperatureC > 0 ? (
                       <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-xs space-y-4">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-600">Lectura FSR Directa</span>
-                          <span className="text-rose-500 font-bold text-[10px] bg-rose-50 border border-rose-100/60 px-2.5 py-0.5 rounded-full">
+                          <span className="text-xs font-bold text-slate-600">Temperatura Corporal</span>
+                          <span className="text-amber-600 font-bold text-[10px] bg-amber-50 border border-amber-100 px-2.5 py-0.5 rounded-full">
                             ACTIVO
                           </span>
                         </div>
-                        
-                        <div className="flex items-center justify-around py-2">
-                          <div className="text-center">
-                            <span className="text-3xl font-black text-slate-800">{latestReading.hugForce}%</span>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Fuerza Actual</p>
-                          </div>
-                          <div className="h-8 w-px bg-slate-100"></div>
-                          <div className="text-center">
-                            <span className="text-3xl font-black text-teal-600">{maxGripForce}%</span>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Fuerza Máxima</p>
-                          </div>
+                        <div className="text-center py-4">
+                          <span className="text-5xl font-black text-slate-800">{latestReading.temperatureC}°C</span>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">Temperatura Actual</p>
                         </div>
-
                         <div className="bg-slate-50 rounded-xl p-3.5 text-xs text-slate-500 font-medium">
                           <div className="flex justify-between mb-1">
-                            <span>Abrazo Promedio:</span>
-                            <span className="font-bold text-slate-700">{avgHugForce}%</span>
+                            <span>Estado:</span>
+                            <span className={`font-bold ${latestReading.temperatureC > 37.5 ? 'text-rose-600' : latestReading.temperatureC < 35 ? 'text-blue-600' : 'text-emerald-600'}`}>
+                              {latestReading.temperatureC > 37.5 ? 'Fiebre' : latestReading.temperatureC < 35 ? 'Hipotermia' : 'Normal'}
+                            </span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Calidad de Agarre:</span>
-                            <span className="font-bold text-teal-600">{latestReading.hugForce > 60 ? 'Alto' : latestReading.hugForce > 20 ? 'Medio' : 'Leve'}</span>
+                            <span>Rango normal:</span>
+                            <span className="font-bold text-slate-700">35°C — 37.5°C</span>
                           </div>
                         </div>
                       </div>
                     ) : (
                       <div className="bg-white border border-rose-100 rounded-2xl p-8 shadow-xs text-center text-rose-700 font-bold text-xs flex flex-col justify-center items-center gap-2 min-h-[220px]">
-                        <Heart size={28} className="text-rose-400 animate-pulse" />
-                        <span>Sensor FSR Desconectado</span>
+                        <Activity size={28} className="text-rose-400 animate-pulse" />
+                        <span>Sensor LM35 Desconectado</span>
                         <p className="text-[10px] text-slate-400 font-normal max-w-[160px]">
-                          El canal analógico 34 no reporta datos del sensor de fuerza.
+                          Verifica la conexión del LM35 en el pin analógico 13.
                         </p>
                       </div>
                     )}
                   </div>
 
-                  {/* 2. Sensor de Ritmo Cardíaco (Pulso) card */}
+                  {/* 2. Sensor de Ritmo Cardíaco (Pulso MAX30102) */}
                   <div className="space-y-2">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
-                      💓 2. Sensor de Pulso (Ritmo Cardíaco)
+                      💓 2. Sensor de Pulso (MAX30102)
                     </span>
                     {isPulseConnected ? (
                       <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-xs space-y-4">
@@ -684,7 +686,6 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
                             ACTIVO
                           </span>
                         </div>
-
                         <div className="flex items-center justify-around py-2">
                           <div className="text-center">
                             <span className="text-3xl font-black text-slate-800">{latestReading.heartRate} <span className="text-xs text-slate-400 font-bold">bpm</span></span>
@@ -696,7 +697,6 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
                             <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Ritmo Promedio</p>
                           </div>
                         </div>
-
                         <div className="bg-slate-50 rounded-xl p-3.5 text-xs text-slate-500 font-medium">
                           <div className="flex justify-between">
                             <span>Tono de Regulación:</span>
@@ -711,59 +711,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
                         <Activity size={28} className="text-rose-400 animate-pulse" />
                         <span>Sensor de Pulso Desconectado</span>
                         <p className="text-[10px] text-slate-400 font-normal max-w-[160px]">
-                          Verifica la conexión I2C del MAX30102 o el sensor analógico en el pin 35.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 3. Sensor de Movimiento (Giroscopio MPU6050) card */}
-                  <div className="space-y-2">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
-                      📐 3. Giroscopio (Movimiento 3D)
-                    </span>
-                    {isGyroConnected ? (
-                      <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-xs space-y-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-600">Cinemática MPU6050</span>
-                          <span className="text-indigo-600 font-bold text-[10px] bg-indigo-50 border border-indigo-100 px-2.5 py-0.5 rounded-full">
-                            ACTIVO
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-around py-2">
-                          <div className="text-center">
-                            <span className="text-3xl font-black text-slate-800">{rotationMagnitude} <span className="text-xs text-slate-400 font-bold">°/s</span></span>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Magnitud Actual</p>
-                          </div>
-                          <div className="h-8 w-px bg-slate-100"></div>
-                          <div className="text-center">
-                            <span className="text-3xl font-black text-indigo-600">{stereotypicalTicks}</span>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Tics Motores</p>
-                          </div>
-                        </div>
-
-                        <div className="bg-slate-50 rounded-xl p-3.5 text-[10px] text-slate-500 font-medium space-y-1">
-                          <div className="flex justify-between">
-                            <span>Coordenadas Ejes:</span>
-                            <span className="font-mono font-bold text-slate-700">
-                              X: {latestReading.rotationX}°/s | Y: {latestReading.rotationY}°/s | Z: {latestReading.rotationZ}°/s
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Estado de Movimiento:</span>
-                            <span className={`font-bold ${rotationMagnitude > 130 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                              {rotationMagnitude > 130 ? 'Agitación / Crisis' : 'Estable'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-white border border-rose-100 rounded-2xl p-8 shadow-xs text-center text-rose-700 font-bold text-xs flex flex-col justify-center items-center gap-2 min-h-[220px]">
-                        <Wifi size={28} className="text-rose-400 animate-pulse" />
-                        <span>MPU6050 Desconectado</span>
-                        <p className="text-[10px] text-slate-400 font-normal max-w-[160px]">
-                          No se detectó comunicación I2C con el giroscopio.
+                          Verifica la conexión I2C del MAX30102 (SDA/SCL).
                         </p>
                       </div>
                     )}

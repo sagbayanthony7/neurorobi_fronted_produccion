@@ -35,6 +35,7 @@ export interface SensorReading {
   rotationY: number; // -180 to 180
   rotationZ: number; // -180 to 180
   heartRate: number; // 60 to 150 bpm
+  temperatureC: number; // temperature in Celsius
   switch1?: boolean;
   switch2?: boolean;
   switch1Duration?: number;
