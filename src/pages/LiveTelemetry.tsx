@@ -711,7 +711,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
                         <Activity size={28} className="text-rose-400 animate-pulse" />
                         <span>Sensor de Pulso Desconectado</span>
                         <p className="text-[10px] text-slate-400 font-normal max-w-[160px]">
-                          El canal analógico 35 no reporta señal del ritmo cardíaco.
+                          Verifica la conexión I2C del MAX30102 o el sensor analógico en el pin 35.
                         </p>
                       </div>
                     )}
