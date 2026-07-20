@@ -350,16 +350,16 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
               
               {/* Quick indicators */}
               <div className="flex flex-wrap items-center gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-teal-500"></span> Presión (Hug): {currentHugForce}%</span>
                 {selectedDeviceType === 'oso' ? (
                   <>
-                            <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500"></span> Brazo Izquierdo: {latestReading.switch1 ? 'ACTIVO' : 'INACTIVO'}</span>
-                        <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-fuchsia-500"></span> Brazo Derecho: {latestReading.switch2 ? 'ACTIVO' : 'INACTIVO'}</span>
-                        <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-indigo-500"></span> Sacudón: {currentShakeIntensity} pts</span>
+                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-teal-500"></span> Presión (Hug): {currentHugForce}%</span>
+                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500"></span> Brazo Izquierdo: {latestReading.switch1 ? 'ACTIVO' : 'INACTIVO'}</span>
+                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-fuchsia-500"></span> Brazo Derecho: {latestReading.switch2 ? 'ACTIVO' : 'INACTIVO'}</span>
+                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-indigo-500"></span> Sacudón: {currentShakeIntensity} pts</span>
                   </>
                 ) : (
                   <>
-                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-rose-500"></span> Pulso (HR): {latestReading.heartRate} bpm</span>
+                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-rose-500"></span> Pulso: {latestReading.heartRate} bpm</span>
                     <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500"></span> Temperatura: {latestReading.temperatureC > 0 ? `${latestReading.temperatureC}°C` : 'N/A'}</span>
                   </>
                 )}
@@ -370,7 +370,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 w-full">
               <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
-                  ⏱️ Duración de Presionado de Brazos
+                  {selectedDeviceType === 'oso' ? '⏱️ Duración de Presionado de Brazos' : '💓 Frecuencia Cardíaca (MAX30102)'}
                 </span>
                 {selectedDeviceType === 'oso' ? (
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 mt-4">
