@@ -20,6 +20,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import type { ClinicalSession } from '../../types';
+import { formatDate } from '../../utils/formatDate';
 
 interface SessionDetailModalProps {
   isOpen: boolean;
@@ -87,7 +88,7 @@ export const SessionDetailModal: React.FC<SessionDetailModalProps> = ({
               {session.patientName} — {getRoleLabel(session.specialistRole)}
             </h2>
             <p className="text-[11px] text-slate-400 font-semibold mt-0.5">
-              {session.date} · Dispositivo: {session.deviceType === 'oso' ? 'Oso' : 'Pulsera'}
+              {formatDate(session.date)} · Dispositivo: {session.deviceType === 'oso' ? 'Oso' : 'Pulsera'}
             </p>
           </div>
           <button

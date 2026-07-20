@@ -2,6 +2,7 @@ import React from 'react';
 import { X, Printer, Shield, FileText } from 'lucide-react';
 import type { ClinicalSession } from '../../types';
 import { usePatients } from '../../context/PatientContext';
+import { formatDate } from '../../utils/formatDate';
 
 interface PrintReportModalProps {
   isOpen: boolean;
@@ -26,24 +27,6 @@ export const PrintReportModal: React.FC<PrintReportModalProps> = ({
 
   const handlePrint = () => {
     window.print();
-  };
-
-  // Format the date field — could be an ISO string from the DB or a locale string
-  const formatDate = (dateStr: string) => {
-    try {
-      const d = new Date(dateStr);
-      // Check if valid date
-      if (!isNaN(d.getTime())) {
-        return d.toLocaleDateString('es-MX', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-      }
-    } catch {
-      // ignore
-    }
-    return dateStr; // fallback to raw string
   };
 
   const formatDuration = (secs: number) => {
@@ -111,7 +94,7 @@ export const PrintReportModal: React.FC<PrintReportModalProps> = ({
                   ID: {session.id.substring(0, 12)}
                 </span>
                 <p className="text-[10px] text-slate-400 font-semibold mt-2">
-                  Fecha Emisión: {new Date().toLocaleDateString()}
+                  Fecha Emisión: {formatDate(new Date().toISOString())}
                 </p>
               </div>
             </div>
@@ -124,7 +107,7 @@ export const PrintReportModal: React.FC<PrintReportModalProps> = ({
               </div>
               <div>
                 <span className="text-[8px] font-bold text-slate-400 uppercase block tracking-wider">Edad / Registro</span>
-                <span className="text-xs font-bold text-slate-800 mt-0.5 block">{age} años (Reg: {registeredAt})</span>
+                <span className="text-xs font-bold text-slate-800 mt-0.5 block">{age} años (Reg: {formatDate(registeredAt)})</span>
               </div>
               <div>
                 <span className="text-[8px] font-bold text-slate-400 uppercase block tracking-wider">Diagnóstico Principal</span>

@@ -265,7 +265,7 @@ export const PatientManagement: React.FC<PatientManagementProps> = ({
                         {selectedPatient.diagnosis}
                       </span>
                       <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
-                        <Calendar size={10} /> Registro: {selectedPatient.registeredAt}
+                        <Calendar size={10} /> Registro: {formatDate(selectedPatient.registeredAt)}
                       </span>
                     </div>
                   </div>

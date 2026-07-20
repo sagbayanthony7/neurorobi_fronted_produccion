@@ -173,7 +173,7 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
       id: `sess-${Date.now()}`,
       patientId: patient.id,
       patientName: patient.name,
-      date: new Date().toLocaleDateString(),
+      date: new Date().toISOString(),
       durationSeconds: 0,
       specialistRole: 'PSICOLOGIA_CLINICA', // Initial default role
       notes: '',
@@ -278,7 +278,7 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
       id: `sess-demo-${Date.now()}`,
       patientId: patient.id,
       patientName: patient.name,
-      date: new Date().toLocaleDateString(),
+      date: new Date().toISOString(),
       durationSeconds: 120,
       specialistRole: 'PSICOLOGIA_CLINICA',
       notes: 'Sesión de demostración cargada automáticamente para auditoría clínica.',
