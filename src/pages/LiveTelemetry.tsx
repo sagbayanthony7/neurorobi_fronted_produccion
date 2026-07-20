@@ -725,62 +725,19 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
             }
           </div>
 
-          {/* Interactive Spike Injector & Action Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            {/* Clinician manual spike injectors (Demo helpers) */}
-            <div className="lg:col-span-2 bg-white border border-slate-100 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
-              <div>
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5 flex items-center gap-1">
-                  <Zap size={12} className="text-amber-500" />
-                  Inyectores Manuales de Telemetría (Herramienta de Demostración)
-                </h4>
-                <p className="text-[11px] text-slate-500 leading-normal mb-4 font-medium">
-                  Simule anomalías fisiológicas o físicas del juguete en tiempo real para evaluar las alertas del sistema.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button
-                  onClick={() => triggerSpike('Presión')}
-                  className="flex items-center justify-center gap-2 py-2 px-3 border border-rose-100 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-xl transition-all"
-                >
-                  <Heart size={14} fill="currentColor" /> Inyectar Presión (Abrazo)
-                </button>
-                
-                <button
-                  onClick={() => triggerSpike('Frecuencia Cardíaca')}
-                  className="flex items-center justify-center gap-2 py-2 px-3 border border-rose-100 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-xl transition-all animate-live-pulse"
-                >
-                  <AlertTriangle size={14} /> Inyectar Taquicardia
-                </button>
-
-                <button
-                  onClick={() => triggerSpike('Cinemática')}
-                  className="flex items-center justify-center gap-2 py-2 px-3 border border-indigo-100 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-xl transition-all"
-                >
-                  <Zap size={14} /> Inyectar Crisis Motora
-                </button>
-              </div>
-            </div>
-
-            {/* Master Stop Button */}
-            <div className="lg:col-span-1 bg-white border border-slate-100 rounded-2xl p-5 shadow-xs flex flex-col justify-center items-center">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">Control Maestro de Sesión</span>
-              
+          {/* Session Control */}
+          <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-xs flex flex-col items-center">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">Control de Sesión</span>
               <button
                 onClick={handleEndSession}
-                className="w-full flex items-center justify-center gap-2.5 py-4 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-rose-600/20 active:scale-98 transition-all animate-pulse"
+                className="flex items-center justify-center gap-2.5 py-4 px-8 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-rose-600/20 active:scale-98 transition-all animate-pulse"
               >
                 <Square size={14} fill="currentColor" />
                 Finalizar Sesión Terapéutica
               </button>
-              
               <span className="text-[9px] text-slate-400 mt-2 font-bold uppercase tracking-wider text-center">
                 Congela el flujo y procesa promedios
               </span>
-            </div>
-
           </div>
         </>
       )}
