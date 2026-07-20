@@ -8,7 +8,7 @@ interface PatientContextType {
   activePatient: Patient | null;
   sessions: ClinicalSession[];
   activeSession: ClinicalSession | null;
-  registerPatient: (name: string, age: number, diagnosis: ClinicalDiagnosis, initialObservation: string, profileImage: File | null) => Promise<Patient | undefined>;
+  registerPatient: (name: string, age: number, diagnosis: ClinicalDiagnosis, initialObservation: string, profileImage: File | null, specialistId?: string) => Promise<Patient | undefined>;
   updatePatient: (id: string, name: string, age: number, diagnosis: ClinicalDiagnosis, initialObservation: string, profileImage: File | null) => Promise<Patient | undefined>;
   deletePatient: (id: string) => Promise<boolean>;
   startSession: (patientId: string) => void;
@@ -79,7 +79,8 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
     age: number,
     diagnosis: ClinicalDiagnosis,
     initialObservation: string,
-    profileImage: File | null
+    profileImage: File | null,
+    specialistId?: string
   ): Promise<Patient | undefined> => {
     try {
       let profileImageBase64: string | null = null;
@@ -92,7 +93,8 @@ export const PatientProvider: React.FC<{ children: React.ReactNode }> = ({ child
         age,
         diagnosis,
         initialObservation,
-        profileImageBase64
+        profileImageBase64,
+        specialistId: specialistId || undefined
       }, { headers: getAuthHeaders() });
       const newPatient = res.data;
       setPatients(prev => [newPatient, ...prev]);

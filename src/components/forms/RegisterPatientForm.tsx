@@ -1,14 +1,25 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 import { usePatients } from '../../context/PatientContext';
-import { UserPlus, Sparkles, User, ShieldAlert, Camera, X } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { UserPlus, Sparkles, User, ShieldAlert, Camera, X, Stethoscope } from 'lucide-react';
 
 interface RegisterPatientFormProps {
   onSuccess: (patientName: string) => void;
 }
 
+interface SpecialistOption {
+  id: string;
+  name: string;
+  email: string;
+  specialty?: { name: string };
+}
+
 export const RegisterPatientForm: React.FC<RegisterPatientFormProps> = ({ onSuccess }) => {
   const { registerPatient } = usePatients();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isAdmin = user?.role === 'ADMIN';
 
   // Form states
   const [name, setName] = useState('');
@@ -21,6 +32,24 @@ export const RegisterPatientForm: React.FC<RegisterPatientFormProps> = ({ onSucc
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+
+  // Specialist selector (admin only)
+  const [specialists, setSpecialists] = useState<SpecialistOption[]>([]);
+  const [selectedSpecialistId, setSelectedSpecialistId] = useState('');
+  const [loadingSpecialists, setLoadingSpecialists] = useState(false);
+
+  useEffect(() => {
+    if (isAdmin) {
+      setLoadingSpecialists(true);
+      axios.get(`${import.meta.env.VITE_API_URL || 'https://neurorobibackendproduccion-production.up.railway.app'}/api/auth/specialists`)
+        .then(res => {
+          const therapists = res.data.filter((s: SpecialistOption & { role: string }) => s.role !== 'ADMIN');
+          setSpecialists(therapists);
+        })
+        .catch(() => {})
+        .finally(() => setLoadingSpecialists(false));
+    }
+  }, [isAdmin]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -42,7 +71,7 @@ export const RegisterPatientForm: React.FC<RegisterPatientFormProps> = ({ onSucc
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!name.trim()) newErrors.name = 'El nombre completo es requerido.';
+    if (!name.trim()) newErrors.name = 'El nombre completo es requerido.'
     else if (name.trim().length < 3) newErrors.name = 'El nombre debe tener al menos 3 caracteres.';
 
     const ageNum = parseInt(age);
@@ -62,6 +91,10 @@ export const RegisterPatientForm: React.FC<RegisterPatientFormProps> = ({ onSucc
       newErrors.observation = 'La observación inicial debe ser más detallada (mínimo 15 caracteres).';
     }
 
+    if (isAdmin && !selectedSpecialistId) {
+      newErrors.specialistId = 'Debes asignar el paciente a un especialista.';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -79,7 +112,8 @@ export const RegisterPatientForm: React.FC<RegisterPatientFormProps> = ({ onSucc
         parseInt(age),
         finalDiagnosis,
         observation.trim(),
-        profileImage
+        profileImage,
+        isAdmin ? selectedSpecialistId : undefined
       );
 
       if (result) {
@@ -92,6 +126,7 @@ export const RegisterPatientForm: React.FC<RegisterPatientFormProps> = ({ onSucc
         setObservation('');
         setProfileImage(null);
         setPreviewUrl(null);
+        setSelectedSpecialistId('');
         setErrors({});
         onSuccess(name);
       } else {
@@ -293,6 +328,39 @@ export const RegisterPatientForm: React.FC<RegisterPatientFormProps> = ({ onSucc
           ></textarea>
           {errors.observation && <p className="text-[11px] text-rose-500 font-semibold mt-1 flex items-center gap-1"><ShieldAlert size={10} /> {errors.observation}</p>}
         </div>
+
+        {/* Specialist Selector (Admin only) */}
+        {isAdmin && (
+          <div>
+            <label htmlFor="reg-specialist" className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">
+              Asignar a Especialista
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                <Stethoscope size={14} />
+              </span>
+              <select
+                id="reg-specialist"
+                value={selectedSpecialistId}
+                onChange={(e) => setSelectedSpecialistId(e.target.value)}
+                disabled={loadingSpecialists}
+                className={`w-full pl-9 pr-4 py-2 text-sm bg-slate-50 hover:bg-slate-50/50 border rounded-xl focus:outline-none focus:ring-2 transition-all cursor-pointer ${
+                  errors.specialistId
+                    ? 'border-rose-300 focus:ring-rose-500 focus:border-rose-400'
+                    : 'border-slate-100 focus:ring-teal-500 focus:border-teal-400'
+                }`}
+              >
+                <option value="" disabled>{loadingSpecialists ? 'Cargando...' : 'Seleccione un especialista...'}</option>
+                {specialists.map(s => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} {s.specialty ? `(${s.specialty.name})` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {errors.specialistId && <p className="text-[11px] text-rose-500 font-semibold mt-1 flex items-center gap-1"><ShieldAlert size={10} /> {errors.specialistId}</p>}
+          </div>
+        )}
 
         {/* Submit Button */}
         <button
