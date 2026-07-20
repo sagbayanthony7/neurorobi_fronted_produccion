@@ -130,6 +130,7 @@ export const useSensorStream = ({ isStreaming, onSpikeTriggered, patientId, devi
             ...data,
             hugForce: lastReading ? smoothValue(data.hugForce, lastReading.hugForce, 0.2) : data.hugForce,
             heartRate: lastReading ? smoothValue(data.heartRate, lastReading.heartRate, 0.18) : data.heartRate,
+            temperatureC: lastReading ? smoothValue(data.temperatureC, lastReading.temperatureC ?? 0, 0.2) : data.temperatureC,
             rotationX: lastReading ? smoothValue(data.rotationX, lastReading.rotationX, 0.22) : data.rotationX,
             rotationY: lastReading ? smoothValue(data.rotationY, lastReading.rotationY, 0.22) : data.rotationY,
             rotationZ: lastReading ? smoothValue(data.rotationZ, lastReading.rotationZ, 0.22) : data.rotationZ,

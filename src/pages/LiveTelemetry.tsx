@@ -66,9 +66,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
     avgHeartRate,
     avgHugForce,
     isDeviceConnected,
-    isFsrConnected,
     isPulseConnected,
-    isGyroConnected,
     socketConnected,
     shakeIntensity,
     strongShakeCount,
@@ -114,6 +112,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
     rotationY: 0,
     rotationZ: 0,
     heartRate: 80,
+    temperatureC: 0,
     switch1: false,
     switch2: false,
     shakeIntensity: 0
@@ -316,11 +315,16 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
               <li>El ESP32 debe transmitir un JSON cada 1 segundo con la siguiente estructura:
                 <pre className="mt-1 bg-slate-900 text-slate-200 font-mono text-[11px] p-3 rounded-lg overflow-x-auto">
 {`{
-  "hugForce": 45,      // Presión (0 a 100)
-  "rotationX": 15,     // Giroscopio X
-  "rotationY": -5,     // Giroscopio Y
-  "rotationZ": 8,      // Giroscopio Z
-  "heartRate": 85      // Pulso (bpm)
+  "deviceType": "pulsera",
+  "heartRate": 85,
+  "temperatureC": 36.5,
+  "hugForce": -1,
+  "rotationX": -999,
+  "rotationY": -999,
+  "rotationZ": -999,
+  "switch1": false,
+  "switch2": false,
+  "shakeIntensity": 0
 }`}
                 </pre>
               </li>
