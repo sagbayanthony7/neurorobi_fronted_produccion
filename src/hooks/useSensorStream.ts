@@ -72,22 +72,29 @@ export const useSensorStream = ({ isStreaming, onSpikeTriggered, patientId, devi
     if (isStreaming && patientId) {
       resetStream();
 
-      const newSocket = io(import.meta.env.VITE_WS_URL || 'wss://neurorobibackendproduccion-production.up.railway.app', {
-        transports: ['websocket']
+      const wsUrl = import.meta.env.VITE_WS_URL || 'wss://neurorobibackendproduccion-production.up.railway.app';
+      console.log('[useSensorStream] Connecting to:', wsUrl);
+      const newSocket = io(wsUrl, {
+        transports: ['polling', 'websocket'],
+        reconnectionAttempts: 5,
+        timeout: 10000
       });
       setSocket(newSocket);
 
       newSocket.on('connect', () => {
+        console.log('[useSensorStream] Socket connected:', newSocket.id);
         setSocketConnected(true);
         newSocket.emit('start-stream', { patientId, deviceType });
       });
 
-      newSocket.on('disconnect', () => {
+      newSocket.on('disconnect', (reason) => {
+        console.log('[useSensorStream] Socket disconnected:', reason);
         setSocketConnected(false);
         setIsDeviceConnected(false);
       });
 
-      newSocket.on('connect_error', () => {
+      newSocket.on('connect_error', (err) => {
+        console.error('[useSensorStream] Connection error:', err.message);
         setSocketConnected(false);
       });
 
