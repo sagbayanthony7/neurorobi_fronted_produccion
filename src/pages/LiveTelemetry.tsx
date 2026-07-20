@@ -40,7 +40,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
 
   // Active streaming state
   const [isStreaming, setIsStreaming] = useState(true);
-  const [selectedDeviceType, setSelectedDeviceType] = useState<'pulsera' | 'oso'>('oso');
+  const [selectedDeviceType, setSelectedDeviceType] = useState<'pulsera' | 'oso'>('pulsera');
   const [triggers] = useState<string[]>([]);
   const [fatigueCheckmarks] = useState<Record<string, boolean>>({
     forceLoss: false,
@@ -113,18 +113,18 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
     rotationZ: 0,
     heartRate: 80,
     temperatureC: 0,
-    switch1: false,
-    switch2: false,
     shakeIntensity: 0
   };
 
-  const currentHugForce = latestReading.hugForce >= 0
-    ? latestReading.hugForce
-    : latestReading.switch1 || latestReading.switch2
-      ? 55
+  const isPulsera = selectedDeviceType === 'pulsera';
+
+  const currentHugForce = isPulsera
+    ? 0
+    : latestReading.hugForce >= 0
+      ? latestReading.hugForce
       : 0;
 
-  const forceIsActive = currentHugForce > 0 || latestReading.switch1 || latestReading.switch2;
+  const forceIsActive = isPulsera ? false : currentHugForce > 0;
   const currentShakeIntensity = latestReading.shakeIntensity ?? shakeIntensity;
 
   // Calculate rotation magnitude
@@ -671,7 +671,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
                         <Activity size={28} className="text-rose-400 animate-pulse" />
                         <span>Sensor LM35 Desconectado</span>
                         <p className="text-[10px] text-slate-400 font-normal max-w-[160px]">
-                          Verifica la conexión del LM35 en el pin analógico 13.
+                          Verifica la conexión del LM35 en el GPIO4.
                         </p>
                       </div>
                     )}
@@ -715,7 +715,7 @@ export const LiveTelemetry: React.FC<LiveTelemetryProps> = ({
                         <Activity size={28} className="text-rose-400 animate-pulse" />
                         <span>Sensor de Pulso Desconectado</span>
                         <p className="text-[10px] text-slate-400 font-normal max-w-[160px]">
-                          Verifica la conexión I2C del MAX30102 (SDA/SCL).
+                          Verifica la conexión I2C del MAX30102 (SDA: GPIO5 / SCL: GPIO6).
                         </p>
                       </div>
                     )}
